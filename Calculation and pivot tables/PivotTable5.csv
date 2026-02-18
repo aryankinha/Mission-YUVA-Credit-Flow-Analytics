@@ -1,0 +1,11 @@
+EMI Burden by Sector,,,,
+Cleaned Sector,AVERAGE of Clean EMI_to_Income_Ratio,AVERAGE of Clean Risk_Score,,
+Agri,0.2910051282,51.28970164,,
+Healthcare,0.2962270531,50.52924528,,
+IT,0.3016315789,51.03903346,,Which sectors are financially stressed?
+Manufacturing,0.2991390135,50.85397412,,
+NA,0.296950495,51.22071636,,High EMI ratio → high default risk
+Retail,0.2998491379,51.48855634,,
+Services,0.3028125,50.78351449,,
+Tourism,0.3027421053,51.11242604,,
+Grand Total,0.2988787158,51.04026217,,

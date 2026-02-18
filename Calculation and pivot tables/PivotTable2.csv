@@ -1,0 +1,8 @@
+Gender vs Loan Performance,,,,,,,,
+COUNT of Application ID,Clean Repayment_Status,,,,,,,
+Gender,Default,Delayed,Late,NA,On-Time,Grand Total,,Do women have better repayment behavior?
+Female,464,518,542,1040,517,3081,,
+Male,483,463,492,950,507,2895,,
+NA,264,263,253,515,264,1559,,
+Other,246,231,251,488,249,1465,,
+Grand Total,1457,1475,1538,2993,1537,9000,,

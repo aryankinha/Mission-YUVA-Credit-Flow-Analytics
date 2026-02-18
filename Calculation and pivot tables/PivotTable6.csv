@@ -1,0 +1,11 @@
+Stage-Level Delay Analysis,,,,,,,
+Cleaned Sector,SUM of Initiated Flag,SUM of Submitted Flag,SUM of Verified by SBDU Flag,SUM of Approved by DLIC Flag,SUM of Verified by BHD Flag,SUM of Bank Sanctioned Flag,SUM of Bank Disbursed Flag
+Agri,1110,1039,797,697,372,269,217
+Healthcare,1100,1017,811,717,393,277,202
+IT,1142,1080,808,712,379,274,221
+Manufacturing,1133,1061,805,695,417,286,233
+NA,1083,1016,792,692,371,260,214
+Retail,1190,1114,867,776,429,308,248
+Services,1160,1097,837,755,397,297,220
+Tourism,1082,1016,778,687,403,259,209
+Grand Total,9000,8440,6495,5731,3161,2230,1764

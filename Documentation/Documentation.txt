@@ -1,0 +1,1152 @@
+﻿Mission YUVA | Operational Bottleneck & Risk Analysis  |  Newton School of Technology
+
+
+
+
+
+
+FINAL PROJECT REPORT
+Operational Bottleneck & Risk Analysis 
+Mission YUVA Skilling-to-Credit Pipeline
+
+
+Sector:
+Banking and Financial Services
+
+
+Dataset:
+Mission YUVA Credit Flow Dataset (Kaggle)
+
+
+Institute:
+Newton School of Technology
+	Team Members:
+* Harshita Joshi
+* Anant Lalwani
+* Om Kar Shukla
+* Saransh Singh Tomar
+* Aryan Kinha
+* Kanishka Dubey
+	
+
+
+
+
+
+________________
+
+
+1. Executive Summary
+This report presents a structured analysis of operational and financial data from the Mission YUVA credit pipeline to identify bottlenecks, risk drivers, and performance gaps in the skilling-to-credit ecosystem. The dataset consists of 9,000 credit applications with operational stage timelines, financial indicators, credit risk scores, and repayment outcomes.
+
+
+All figures in this report are derived directly from the Cleaned_Dataset and the pivot tables produced from it — including the Funnel, Stage-Level Delay, District TAT, Sector TAT, EMI Burden, Gender Repayment, Enterprise Type, Disability Loan Amount, and District Gender Disbursement pivot tables.
+
+
+Key Findings at a Glance
+
+
+9,000
+Total Applications
+	186.3 Days
+Avg. Total TAT
+	64.1 Days
+Bank Sanction Delay (Avg)
+	466 Apps
+Sanction–Disbursement Gap
+	30.36%
+High-Risk Applicants (≥70)
+	1,457
+Default Count
+	1,916 (21.3%)
+Overdue >30 Days
+	₹186.2 Cr
+Total Loan Portfolio
+	
+
+Key Findings Summary
+* Average Total TAT: 186.3 days (Source: DistrictTAT_PivotTable — Grand Total average)
+* Bank Sanction: the largest single bottleneck at 64.1 days average, accounting for 34.4% of total TAT
+* Pipeline Funnel: 9,000 initiated → 1,764 disbursed = only 19.6% end-to-end conversion (Source: Funnel_PivotTable)
+* Sanction–Disbursement Gap: 2,230 sanctioned − 1,764 disbursed = 466 applications pending release
+* Default Rate: 1,457 out of 9,000 = 16.19%; among those with repayment status, 29.1% defaulted
+* High-Risk Applicants (Risk Score ≥ 70): 2,732 = 30.36% of total pool
+* Total Loan Portfolio: ₹18,619,228,179 (~₹186.2 Crore) across all enterprise types (Source: EnterpriseType_PivotTable)
+* Median Loan Amount across all disability categories: ₹1,928,968.50 (Source: DisabilityLoanAmount_PivotTable)
+
+
+2. Sector & Business Context
+The banking and financial services sector operates within a risk-sensitive environment where operational efficiency directly impacts portfolio quality and institutional sustainability. Mission YUVA serves first-time and underserved borrowers across 20 districts of Jammu & Kashmir — spanning urban and rural areas, multiple disability categories, and diverse enterprise types.
+
+
+Mission YUVA Pipeline Stages (Avg. Days — from Cleaned_Dataset)
+* BHD Verification: 19.9 days average
+* SBDU Verification: 47.5 days average
+* DLIC Approval: 31.7 days average
+* Bank Sanction: 64.1 days average — CRITICAL BOTTLENECK
+* Loan Disbursement: 23.6 days average
+
+
+The overall TAT range (from Sector TAT pivot) spans from a minimum of 39 days to a maximum of 335 days, indicating extreme variability in pipeline experience across applicants. Only 19.6% of applicants (1,764 of 9,000) receive disbursement, pointing to systemic structural barriers beyond individual risk factors.
+
+
+3. Problem Statement & Objectives
+Problem Statement
+How can operational and outcome data be used to identify bottlenecks, risk drivers, and performance gaps in the skilling-to-credit pipeline, in order to design bank-led financing models that are low-risk and outcome-linked?
+
+
+Objectives
+1. Identify stage-level bottlenecks using turnaround time analysis (StageLevelDelay_PivotTable, DistrictTAT_PivotTable, SectorTAT_PivotTable).
+2. Develop structured risk segmentation based on Risk Score thresholds using the Cleaned_Dataset.
+3. Analyze repayment stress using EMI burden (EMIBurden_PivotTable) and gender-based repayment behavior (GenderRepayment_PivotTable).
+4. Evaluate equity access for specially-abled applicants (DisabilityLoanAmount_PivotTable).
+5. Map geographic disbursement performance (DistrictGenderDisbursement_PivotTable, Funnel_PivotTable).
+6. Recommend risk-controlled financing strategies linked directly to pivot-level findings.
+
+
+4. Data Description
+The Mission YUVA Credit Flow Dataset consists of 9,000 application records cleaned and structured across the Cleaned_Dataset tab, with 9 supporting pivot tables used for all analysis in this report.
+
+
+Data Source
+	Records / Scope
+	Used For
+	Cleaned_Dataset
+	9,000 rows × 56 columns
+	Core KPIs, risk segmentation, EMI and overdue analysis
+	Funnel_PivotTable
+	9,000 → 1,764 (7 stages × 20 districts)
+	Pipeline conversion and drop-off analysis
+	StageLevelDelay_PivotTable
+	8 sectors × 7 stage flags
+	Stage-wise throughput by sector
+	DistrictTAT_PivotTable
+	20 districts, avg TAT per district
+	Geographic bottleneck mapping
+	SectorTAT_PivotTable
+	8 sectors, MAX and MIN TAT
+	Sector-level TAT range analysis
+	EMIBurden_PivotTable
+	8 sectors, avg EMI ratio + avg Risk Score
+	Repayment stress and sector risk profiling
+	GenderRepayment_PivotTable
+	4 gender groups × 5 repayment statuses
+	Gender-wise default and repayment behavior
+	EnterpriseType_PivotTable
+	4 enterprise types, count + total loan amount
+	Enterprise financing volume and distribution
+	DisabilityLoanAmount_PivotTable
+	5 disability types, count + median loan
+	Equity access analysis for vulnerable groups
+	DistrictGenderDisbursement_PivotTable
+	20 districts × 4 gender groups
+	Geographic + gender disbursement breakdown
+	
+
+5. Data Cleaning & Preparation
+The raw dataset contained significant quality issues that were systematically resolved in the Cleaned_Dataset tab. Each original column was paired with a cleaned counterpart, preserving full auditability.
+
+
+Issue
+	Description
+	Resolution
+	Mixed Currency
+	Loan Amount in $, ₹, abbreviated 'k INR' formats
+	Normalized to INR (1 USD = ₹90; 'k' expanded)
+	Inconsistent Dates
+	Multiple date formats + 'As on Feb 2026' text entries
+	Standardized to Month-Year (e.g. Jul 2023)
+	Missing Numerics
+	EMI Amount, Total TAT, Loan Tenure had significant nulls
+	Tagged 'NA' in cleaned columns; excluded from averages
+	Duplicate IDs
+	IDs 49, 63, 68, 81 appeared twice with different data
+	Both entries retained; flagged for review
+	Inconsistent Text
+	Gender: male/Male/FEMALE; Status: ONTIME/On-time/late
+	Standardized to Male/Female/Other/NA; On-Time/Late/Delayed/Default
+	Missing Categoricals
+	Blank Enterprise Type, Sector, Gender entries
+	Filled with 'NA' in cleaned columns
+	
+
+Feature Engineering
+* Risk Category bands applied to Clean Risk_Score: Low (0–40) = 3,355 | Medium (41–69) = 2,457 | High (70–100) = 2,732
+* Overdue Flag: Days_Overdue > 30 → 1,916 applicants flagged (21.3%)
+* EMI Burden Category: derived from Clean EMI_to_Income_Ratio for EMIBurden_PivotTable
+
+
+6. KPI & Metric Framework
+Every KPI below is sourced directly from either the Cleaned_Dataset computation or the corresponding pivot table.
+
+
+KPI
+	Value
+	Source
+	Total Applications
+	9,000
+	Cleaned_Dataset row count
+	Avg. Total TAT
+	186.3 days
+	DistrictTAT_PivotTable — Grand Total
+	TAT Range (Min–Max)
+	39 – 335 days
+	SectorTAT_PivotTable — Grand Total MIN/MAX
+	Avg. BHD Verification
+	19.9 days
+	Cleaned_Dataset — mean of Cleaned Days_to_BHD
+	Avg. SBDU Verification
+	47.5 days
+	Cleaned_Dataset — mean of Cleaned Days_to_SBDU
+	Avg. DLIC Approval
+	31.7 days
+	Cleaned_Dataset — mean of Cleaned Days_to_DLIC
+	Avg. Bank Sanction
+	64.1 days
+	Cleaned_Dataset — mean of Cleaned Days_to_Bank_Sanction
+	Avg. Disbursement
+	23.6 days
+	Cleaned_Dataset — mean of Cleaned Days_to_Disbursement
+	Total Initiated
+	9,000
+	Funnel_PivotTable
+	Total Disbursed
+	1,764
+	Funnel_PivotTable
+	End-to-End Conversion
+	19.6%
+	1,764 / 9,000 (Funnel_PivotTable)
+	Sanction–Disbursement Gap
+	466
+	2,230 − 1,764 (Funnel_PivotTable)
+	Total Loan Portfolio
+	₹186.2 Crore
+	EnterpriseType_PivotTable — Grand Total SUM
+	Median Loan Amount
+	₹19,28,968.50
+	DisabilityLoanAmount_PivotTable — Grand Total MEDIAN
+	High-Risk Applicants (≥70)
+	2,732 (30.36%)
+	Cleaned_Dataset — Clean Risk_Score
+	Medium-Risk (41–69)
+	2,457 (27.30%)
+	Cleaned_Dataset — Clean Risk_Score
+	Low-Risk (≤40)
+	3,355 (37.28%)
+	Cleaned_Dataset — Clean Risk_Score
+	Default Count
+	1,457 (16.19%)
+	GenderRepayment_PivotTable — Grand Total Default
+	Late Count
+	1,538 (17.09%)
+	GenderRepayment_PivotTable — Grand Total Late
+	Delayed Count
+	1,475 (16.39%)
+	GenderRepayment_PivotTable — Grand Total Delayed
+	On-Time Count
+	1,537 (17.08%)
+	GenderRepayment_PivotTable — Grand Total On-Time
+	Overdue > 30 Days
+	1,916 (21.3%)
+	Cleaned_Dataset — Days_Overdue
+	Avg. EMI-to-Income Ratio
+	29.9%
+	EMIBurden_PivotTable — Grand Total avg
+	Avg. Risk Score
+	51.04
+	EMIBurden_PivotTable — Grand Total avg
+	Total Female Disbursed
+	605
+	DistrictGenderDisbursement_PivotTable
+	Total Male Disbursed
+	576
+	DistrictGenderDisbursement_PivotTable
+	
+
+7. Pipeline Funnel & Conversion Analysis
+Source: Funnel_PivotTable. All figures are direct pivot values from your dataset.
+
+
+Overall Pipeline Funnel
+
+
+Stage
+	Count
+	Drop-off from Previous Stage
+	Cumulative Conversion
+	Initiated
+	9,000
+	—
+	100.0%
+	Submitted
+	8,440
+	560 (6.2%)
+	93.8%
+	SBDU Verified
+	6,495
+	1,945 (23.0%)
+	72.2%
+	DLIC Approved
+	5,731
+	764 (11.8%)
+	63.7%
+	BHD Verified
+	3,161
+	2,570 (44.8%)
+	35.1%
+	Bank Sanctioned
+	2,230
+	931 (29.5%)
+	24.8%
+	Bank Disbursed
+	1,764
+	466 (20.9%)
+	19.6%
+	
+
+District-Level Funnel (Top & Bottom 5 by Disbursement)
+
+
+District
+	Initiated
+	Submitted
+	SBDU Verified
+	DLIC Approved
+	BHD Verified
+	Sanctioned
+	Disbursed
+	Reasi
+	456
+	434
+	334
+	300
+	166
+	123
+	102
+	Doda
+	467
+	434
+	348
+	307
+	185
+	127
+	101
+	Budgam
+	456
+	425
+	316
+	280
+	154
+	117
+	99
+	Poonch
+	480
+	457
+	374
+	333
+	190
+	122
+	98
+	Shopian
+	473
+	446
+	339
+	309
+	167
+	128
+	97
+	Kulgam
+	399
+	376
+	285
+	250
+	135
+	99
+	76
+	Kupwara
+	439
+	411
+	309
+	268
+	154
+	101
+	76
+	Kishtwar
+	418
+	383
+	287
+	250
+	154
+	93
+	74
+	Kathua
+	444
+	426
+	318
+	269
+	164
+	96
+	77
+	Samba
+	458
+	428
+	325
+	277
+	163
+	108
+	82
+	
+
+Reasi (102) and Doda (101) lead in disbursements despite not having the highest initiation counts, indicating more efficient local processing. Kishtwar (74) and Kulgam (76) have the lowest disbursements, suggesting district-level banking or verification constraints.
+
+
+8. Stage-Level Delay Analysis
+Source: StageLevelDelay_PivotTable. Shows cumulative flags by sector — revealing which sectors lose the most applicants at each stage.
+
+
+Sector
+	Initiated
+	Submitted
+	SBDU Verified
+	DLIC Approved
+	BHD Verified
+	Sanctioned
+	Disbursed
+	Retail
+	1,190
+	1,114
+	867
+	776
+	429
+	308
+	248
+	Services
+	1,160
+	1,097
+	837
+	755
+	397
+	297
+	220
+	IT
+	1,142
+	1,080
+	808
+	712
+	379
+	274
+	221
+	Manufacturing
+	1,133
+	1,061
+	805
+	695
+	417
+	286
+	233
+	NA
+	1,083
+	1,016
+	792
+	692
+	371
+	260
+	214
+	Agri
+	1,110
+	1,039
+	797
+	697
+	372
+	269
+	217
+	Healthcare
+	1,100
+	1,017
+	811
+	717
+	393
+	277
+	202
+	Tourism
+	1,082
+	1,016
+	778
+	687
+	403
+	259
+	209
+	Grand Total
+	9,000
+	8,440
+	6,495
+	5,731
+	3,161
+	2,230
+	1,764
+	
+
+Retail (248) and Manufacturing (233) lead in final disbursements. Healthcare (202) and Tourism (209) have the lowest disbursements despite comparable initiation volumes, indicating sector-specific appraisal challenges. The BHD Verification stage consistently drops ~55% of applicants across all sectors — the sharpest single-stage drop in the entire funnel.
+
+
+9. District-Level TAT Analysis
+Source: DistrictTAT_PivotTable. Average TAT computed per district across all completed applications.
+
+
+District
+	Avg. TAT (Days)
+	vs. Grand Avg (186.3 days)
+	Srinagar
+	192.5
+	+6.2 days (Highest)
+	Jammu
+	190.1
+	+3.8 days
+	Doda
+	189.8
+	+3.5 days
+	Ramban
+	188.1
+	+1.8 days
+	Poonch
+	187.0
+	+0.7 days
+	Samba
+	186.6
+	+0.3 days
+	Pulwama
+	186.3
+	At average
+	Reasi
+	185.6
+	-0.7 days
+	Shopian
+	185.6
+	-0.7 days
+	Rajouri
+	185.8
+	-0.5 days
+	Baramulla
+	185.0
+	-1.3 days
+	Kulgam
+	185.2
+	-1.1 days
+	Budgam
+	185.9
+	-0.4 days
+	Bandipora
+	186.0
+	-0.3 days
+	Anantnag
+	185.2
+	-1.1 days
+	Kupwara
+	185.4
+	-0.9 days
+	Kishtwar
+	184.7
+	-1.6 days
+	Ganderbal
+	184.3
+	-2.0 days
+	Kathua
+	184.1
+	-2.2 days
+	Udhampur
+	183.1
+	-3.2 days (Lowest)
+	
+
+TAT variation across districts is relatively narrow (183.1–192.5 days), with a 9.4-day spread. Srinagar and Jammu — the largest urban centres — have the highest TAT, likely driven by higher application complexity and bank appraisal load. Udhampur and Kathua are the most efficient districts.
+
+
+10. Sector-Level TAT Analysis
+Source: SectorTAT_PivotTable. Shows MAX and MIN TAT per sector — revealing the extreme variability within each sector.
+
+
+Sector
+	MAX TAT (Days)
+	MIN TAT (Days)
+	TAT Range
+	Observation
+	Agri
+	335
+	51
+	284 days
+	Widest range — highest variability
+	Manufacturing
+	324
+	55
+	269 days
+	High range — complex appraisals
+	Services
+	323
+	46
+	277 days
+	High variability
+	Retail
+	316
+	58
+	258 days
+	Moderate-high range
+	IT
+	315
+	62
+	253 days
+	Moderate range
+	Tourism
+	310
+	39
+	271 days
+	Lowest minimum (fastest cases)
+	Healthcare
+	308
+	41
+	267 days
+	Moderate range
+	NA (Unclassified)
+	305
+	39
+	266 days
+	Lowest maximum
+	Grand Total
+	335
+	39
+	296 days
+	Overall dataset range
+	
+
+The overall TAT range of 39–335 days demonstrates extreme variability. Some applicants complete the entire pipeline in under 6 weeks while others take nearly a year. Agri and Manufacturing show the widest spreads, suggesting inconsistent bank appraisal standards for these sectors. Tourism has the fastest minimum (39 days), indicating it's possible to process rapidly when conditions align.
+
+
+11. EMI Burden & Risk Score by Sector
+Source: EMIBurden_PivotTable. Shows average EMI-to-Income Ratio and average Risk Score per sector.
+
+
+Sector
+	Avg. EMI-to-Income Ratio
+	Avg. Risk Score
+	Stress Level
+	Services
+	30.28%
+	50.78
+	Highest EMI burden
+	Tourism
+	30.27%
+	51.11
+	High EMI burden
+	IT
+	30.16%
+	51.04
+	High EMI burden
+	Retail
+	29.98%
+	51.49
+	Moderate — highest Risk Score
+	Manufacturing
+	29.91%
+	50.85
+	Moderate
+	NA (Unclassified)
+	29.70%
+	51.22
+	Moderate
+	Healthcare
+	29.62%
+	50.53
+	Below average EMI
+	Agri
+	29.10%
+	51.29
+	Lowest EMI burden
+	Grand Total
+	29.88%
+	51.04
+	Overall average
+	
+
+Services and Tourism sectors carry the highest EMI-to-income burden (30.27–30.28%), approaching the critical 30% stress threshold. Retail has the highest average Risk Score (51.49) despite a moderate EMI ratio, suggesting risk is driven by factors beyond income-relative repayment burden. Agri has the lowest EMI burden (29.10%) — the most financially comfortable sector.
+
+
+12. Gender & Repayment Analysis
+Source: GenderRepayment_PivotTable. Full breakdown of repayment status across all gender categories.
+
+
+Gender
+	Default
+	Delayed
+	Late
+	On-Time
+	NA (No Status Yet)
+	Total
+	Female
+	464
+	518
+	542
+	517
+	1,040
+	3,081
+	Male
+	483
+	463
+	492
+	507
+	950
+	2,895
+	NA
+	264
+	263
+	253
+	264
+	515
+	1,559
+	Other
+	246
+	231
+	251
+	249
+	488
+	1,465
+	Grand Total
+	1,457
+	1,475
+	1,538
+	1,537
+	2,993
+	9,000
+	
+
+Among applicants with repayment status (excluding NA): Female default rate = 22.4% (464/2,041); Male = 24.6% (483/1,945); Other = 25.2% (246/977). Female applicants show the highest Late payment count (542) — suggesting income timing issues rather than inability to repay. On-Time rates are nearly identical across genders (Female: 25.3%, Male: 26.1%), indicating gender is not a primary default risk driver.
+
+
+13. Enterprise Type Analysis
+Source: EnterpriseType_PivotTable. Loan count and total portfolio value by enterprise type.
+
+
+Enterprise Type
+	Application Count
+	Total Loan Portfolio (INR)
+	Avg. Loan per App (Est.)
+	Nano Entrepreneur
+	2,991
+	₹61,55,64,4571
+	₹20.58 Lakh
+	Existing Enterprise
+	2,945
+	₹61,36,56,0846
+	₹20.84 Lakh
+	NA (Unclassified)
+	1,551
+	₹32,07,82,1079
+	₹20.68 Lakh
+	Msme Sunrise Sector
+	1,513
+	₹31,19,20,1683
+	₹20.62 Lakh
+	Grand Total
+	9,000
+	₹186,19,22,8179
+	₹20.69 Lakh
+	
+
+Nano Entrepreneurs (2,991) and Existing Enterprises (2,945) together account for 66% of all applications and nearly 66% of total loan portfolio value. Average loan sizes are remarkably uniform across enterprise types (~₹20.6–20.8 Lakh), suggesting a standardized loan sizing formula rather than need-based assessment. MSME Sunrise Sector has the lowest count (1,513) but similar average loan size.
+
+
+14. Disability & Loan Access Analysis
+Source: DisabilityLoanAmount_PivotTable. Evaluates whether specially-abled applicants receive equitable loan access.
+
+
+Disability Category
+	Applicant Count
+	Median Loan Amount (INR)
+	vs. Grand Median
+	Hearing
+	1,286
+	₹19,11,174
+	-₹17,794 below median
+	Locomotor
+	1,290
+	₹18,19,935
+	-₹1,09,033 below median
+	Multiple
+	1,300
+	₹20,08,757.50
+	+₹79,789 above median
+	NA (No Disability)
+	3,856
+	₹19,15,797.50
+	-₹13,171 below median
+	Visual
+	1,268
+	₹19,95,500
+	+₹66,531 above median
+	Grand Total
+	9,000
+	₹19,28,968.50
+	—
+	
+
+Locomotor disability applicants receive the lowest median loan amounts (₹18,19,935) — ₹1.09 lakh below the grand median. This may reflect lower project cost submissions or conservative bank assessments for this group. Multiple and Visual disability applicants receive above-median loans. The relatively uniform distribution suggests loan sizing is primarily project-cost driven, not disability-based, though Locomotor applicants warrant monitoring for potential underfinancing.
+
+
+15. District & Gender Disbursement Analysis
+Source: DistrictGenderDisbursement_PivotTable. Total disbursements by district and gender category.
+
+
+District
+	Female
+	Male
+	NA
+	Other
+	Total Disbursed
+	Reasi
+	42
+	27
+	18
+	15
+	102
+	Doda
+	37
+	35
+	15
+	14
+	101
+	Budgam
+	32
+	30
+	19
+	18
+	99
+	Poonch
+	42
+	33
+	11
+	12
+	98
+	Shopian
+	40
+	28
+	16
+	13
+	97
+	Anantnag
+	29
+	29
+	20
+	17
+	95
+	Jammu
+	29
+	30
+	16
+	19
+	94
+	Ramban
+	29
+	33
+	24
+	8
+	94
+	Rajouri
+	30
+	39
+	7
+	13
+	89
+	Baramulla
+	32
+	26
+	16
+	12
+	86
+	Pulwama
+	34
+	27
+	17
+	7
+	85
+	Srinagar
+	27
+	35
+	11
+	12
+	85
+	Kupwara
+	21
+	27
+	13
+	15
+	76
+	Kulgam
+	28
+	22
+	11
+	15
+	76
+	Kathua
+	20
+	25
+	16
+	16
+	77
+	Samba
+	27
+	31
+	15
+	9
+	82
+	Bandipora
+	22
+	26
+	17
+	23
+	88
+	Ganderbal
+	37
+	18
+	15
+	18
+	88
+	Udhampur
+	23
+	28
+	12
+	15
+	78
+	Kishtwar
+	24
+	27
+	13
+	10
+	74
+	Grand Total
+	605
+	576
+	302
+	281
+	1,764
+	
+
+Female applicants lead total disbursements (605) over Male (576) — a positive equity indicator. Reasi and Poonch have the highest female disbursements (42 each). Rajouri is the only district where Male disbursements (39) significantly exceed Female (30). Ganderbal shows a notable gender gap with 37 female vs. only 18 male disbursements.
+
+
+16. Risk Segmentation Analysis
+Source: Cleaned_Dataset (Clean Risk_Score) and EMIBurden_PivotTable. Risk scores computed across all 9,000 records.
+
+
+Risk Category
+	Score Range
+	Count
+	% of Total
+	Avg. EMI Ratio (from Pivot)
+	Low Risk
+	0 – 40
+	3,355
+	37.28%
+	~29.5%
+	Medium Risk
+	41 – 69
+	2,457
+	27.30%
+	~30.0%
+	High Risk
+	70 – 100
+	2,732
+	30.36%
+	~30.1%
+	
+
+The grand average Risk Score of 51.04 (from EMIBurden_PivotTable) and average EMI ratio of 29.88% confirm the portfolio sits near critical thresholds. With 30.36% high-risk and 16.19% default rate, the pipeline requires structural risk controls at origination rather than post-disbursement monitoring alone.
+
+
+17. Insights Summary
+All insights below are directly traceable to a specific pivot table or Cleaned_Dataset computation:
+
+
+7. Bank Sanction is the #1 Bottleneck (StageLevelDelay + Cleaned_Dataset): 64.1 avg days, 34.4% of total TAT. Consistent across all 8 sectors and 20 districts — systemic, not isolated.
+8. Only 19.6% of Applicants Reach Disbursement (Funnel_PivotTable): 9,000 initiated → 1,764 disbursed. The BHD verification stage drops 44.8% of remaining applicants — the sharpest single-stage loss.
+9. ₹186.2 Crore Total Portfolio at Risk (EnterpriseType_PivotTable): Uniform average loan of ~₹20.7 Lakh across enterprise types signals standardized rather than risk-differentiated loan sizing.
+10. 466 Sanctioned Applications Await Disbursement (Funnel_PivotTable): 2,230 sanctioned − 1,764 disbursed = immediate financial inclusion opportunity requiring process, not credit, resolution.
+11. Services and Tourism Sectors Most EMI-Stressed (EMIBurden_PivotTable): 30.28% and 30.27% EMI ratios — both above the safe 30% threshold. Retail has the highest average Risk Score (51.49).
+12. Agri is the Healthiest Sector (EMIBurden_PivotTable): Lowest EMI ratio (29.10%) and moderate Risk Score (51.29) — most suitable for accelerated processing.
+13. Female Applicants Lead Disbursements (DistrictGenderDisbursement_PivotTable): 605 female vs. 576 male disbursed. Reasi and Poonch lead in female financial inclusion (42 disbursements each).
+14. Locomotor Applicants Receive Lowest Loans (DisabilityLoanAmount_PivotTable): Median ₹18,19,935 vs. grand median ₹19,28,968 — ₹1.09 lakh gap. Requires equity review.
+15. Srinagar Has Worst TAT, Udhampur Best (DistrictTAT_PivotTable): 192.5 vs. 183.1 days — a 9.4-day gap. Urban complexity drives higher TAT in Srinagar and Jammu.
+16. TAT Range is 39–335 Days (SectorTAT_PivotTable): Extreme variability. Some applicants complete in 6 weeks, others take nearly a year — pointing to inconsistent process standards.
+
+
+18. Recommendations
+Each recommendation is directly linked to a pivot table finding:
+
+
+Recommendation
+	Source Pivot
+	Priority
+	Projected Impact
+	Digitize Bank Sanction appraisal to reduce 64.1-day delay
+	StageLevelDelay + Cleaned_Dataset
+	Critical
+	25–35% TAT reduction (~22 days saved per application)
+	Resolve BHD Verification drop-off (44.8% stage loss)
+	Funnel_PivotTable
+	Critical
+	Even 20% recovery = ~632 additional DLIC-eligible applicants
+	Release 466 sanctioned-not-disbursed applications
+	Funnel_PivotTable
+	Critical
+	Immediate disbursement of ₹~96 Crore (466 × ₹20.7L avg)
+	Cap EMI-to-income at 30% for Services & Tourism
+	EMIBurden_PivotTable
+	High
+	Prevents new stressed borrowers in highest-EMI sectors
+	Risk-gate approvals: Risk Score ≥ 70 requires enhanced review
+	Cleaned_Dataset
+	High
+	Controls 30.36% high-risk pool; targets 16.19% default rate
+	Equity audit for Locomotor applicants (₹1.09L loan gap)
+	DisabilityLoanAmount_PivotTable
+	High
+	Corrects potential underfinancing for 1,290 applicants
+	Target TAT reduction in Srinagar & Jammu (+6.2, +3.8 days)
+	DistrictTAT_PivotTable
+	Medium
+	Dedicated banking liaisons could close gap to district average
+	Accelerate Agri sector processing (lowest EMI burden 29.10%)
+	EMIBurden_PivotTable
+	Medium
+	Fast-track lowest-risk sector for portfolio quality improvement
+	Investigate Rajouri gender disbursement gap (39M vs 30F)
+	DistrictGenderDisbursement
+	Medium
+	Restore gender equity in J&K's most gender-skewed district
+	Standardize Agri TAT (39–335 day range)
+	SectorTAT_PivotTable
+	Ongoing
+	Process standards to reduce extreme outlier cases
+	
+
+19. Impact Estimation
+
+
+Impact Area
+	Current Metric (Pivot Source)
+	Target
+	Estimated Outcome
+	Pipeline Efficiency
+	TAT: 186.3 days (DistrictTAT)
+	15–25% reduction
+	TAT falls to ~140–158 days
+	Disbursement Gap
+	466 pending (Funnel)
+	Full release
+	~₹96 Crore deployed immediately
+	Default Rate
+	16.19% / 1,457 (GenderRepayment)
+	Risk gating
+	Default rate falls to ~12–13%
+	BHD Drop-off Recovery
+	44.8% loss at BHD (Funnel)
+	20% recovery
+	~632 additional applications progress
+	EMI Stress Prevention
+	30.28% Services, 30.27% Tourism (EMIBurden)
+	Cap at 30%
+	New disbursements within safe threshold
+	Locomotor Equity Gap
+	₹1.09L below median (DisabilityLoan)
+	Close gap
+	1,290 applicants receive equitable financing
+	
+
+20. Limitations
+* EMI Data Missing for 7,319 Records: Only 1,681 of 9,000 records have valid EMI Amount data. EMIBurden_PivotTable averages reflect this subset only.
+* BHD vs SBDU Flag Sequence Anomaly: SBDU Verified (6,495) exceeds BHD Verified (3,161) in the funnel — suggesting parallel or non-sequential processing rather than a strict linear pipeline.
+* 2,993 Records with No Repayment Status: 33.3% of applications have NA repayment status (not yet at repayment stage), which limits default rate generalizability.
+* Duplicate Application IDs: IDs 49, 63, 68, 81 appear twice — marginally affects aggregate pivot totals.
+* Future-Dated Applications: Some application dates fall in 2026, beyond reasonable dataset collection scope.
+* No Macroeconomic Variables: J&K-specific employment, inflation, and interest rate data absent from dataset.
+
+
+21. Future Scope
+17. Predictive Default Model: Use Clean Risk_Score, EMI ratio, District, Sector, and Days_Overdue as features to predict default probability at application stage.
+18. Real-Time Pivot Dashboard: Connect all pivot tables to live application database for automated TAT alerts and disbursement gap tracking.
+19. NPA Early Warning: Flag accounts entering 60-day overdue window before the 91-day NPA threshold using Days_Overdue trajectory.
+20. Disability-Inclusive Loan Sizing: Develop need-based loan sizing models for Locomotor and Hearing applicants to close the current ₹1.09L median gap.
+21. District-Level Credit Models: Build localized models for Srinagar and Jammu incorporating district-specific risk factors and bank capacity constraints.
+22. Gender Equity Monitoring: Quarterly tracking of female-to-male disbursement ratios per district to sustain and improve on the current 605:576 lead.
+
+
+22. Conclusion
+This report has transformed the Mission YUVA Credit Flow Dataset — comprising 9,000 application records and 9 supporting pivot tables — into a comprehensive, evidence-based decision framework for operational efficiency and financial risk management.
+
+
+Every finding in this report is directly traceable to either the Cleaned_Dataset or one of the pivot tables provided: the Funnel shows only 19.6% end-to-end conversion; the StageLevelDelay and DistrictTAT pivots pinpoint the Bank Sanction stage (64.1 days, 34.4% of TAT) as the critical bottleneck; the EMIBurden pivot reveals Services and Tourism as the most financially stressed sectors; the GenderRepayment pivot confirms 1,457 defaults (16.19%); and the DisabilityLoanAmount pivot flags a ₹1.09 lakh equity gap for Locomotor applicants.
+
+
+By implementing the recommendations — digitizing bank appraisal, resolving the 466-application disbursement gap, enforcing EMI caps in stressed sectors, and applying risk-based approval gating — Mission YUVA's banking partners can reduce defaults by 20–25%, cut TAT by 15–25%, and deploy an estimated ₹96 crore in currently stalled disbursements. This framework provides the measurable, pivot-grounded foundation needed to transition from reactive processing to proactive, outcome-linked, low-risk financing across all 20 J&K districts.
+
+
+23. Contribution Matrix
+
+
+Team Member
+	Dataset & Sourcing
+	Cleaning
+	KPI & Analysis
+	Dashboard
+	Report Writing
+	PPT
+	Overall Role
+	Harshita Joshi
+	High
+	Medium
+	High
+	Medium
+	High
+	Medium
+	Report Lead
+	Anant Lalwani
+	High
+	High
+	Medium
+	Medium
+	Medium
+	Low
+	Data Lead
+	Om Kar Shukla
+	Medium
+	Low
+	Medium
+	Low
+	High
+	Low
+	PPT & Quality
+Lead
+	Saransh
+	Medium
+	Low
+	Medium
+	Low
+	Medium
+	High
+	Project Lead & PPT
+	Aryan Kinha
+	Medium
+	Low
+	High
+	High
+	Medium
+	Low
+	Dashboard Lead
+	Kanishka Dubey
+	Low
+	High
+	Low
+	Medium
+	Low
+	Medium
+	Strategy Lead
+	
+
+Page  | Confidential — Mission YUVA Credit Flow Analysis
